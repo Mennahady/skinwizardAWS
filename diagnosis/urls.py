@@ -4,8 +4,8 @@ from .views import PatientViewSet, SkinImageViewSet, DiagnosisViewSet
 
 router = DefaultRouter()
 router.register(r'patients', PatientViewSet)
-router.register(r'images', SkinImageViewSet)
-router.register(r'diagnoses', DiagnosisViewSet)
+router.register(r'images', SkinImageViewSet, basename='skin-image')
+router.register(r'diagnoses', DiagnosisViewSet, basename='diagnosis')
 
 urlpatterns = [
     path('', include(router.urls)),

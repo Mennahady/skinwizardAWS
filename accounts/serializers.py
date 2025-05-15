@@ -8,6 +8,9 @@ from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.conf import settings
 
+from accounts.models import PharmacyProfile
+from patient_form.models import Patient
+
 User = get_user_model()
 
 class DoctorRegistrationSerializer(serializers.ModelSerializer):
@@ -61,8 +64,7 @@ class PatientRegistrationSerializer(serializers.ModelSerializer):
         write_only=True,
         required=True,
         validators=[validate_password],
-        style={'input_type': 'password'},
-        label='Create password'
+        style={'input_type': 'password'}
     )
     password2 = serializers.CharField(
         write_only=True,
@@ -92,6 +94,13 @@ class PatientRegistrationSerializer(serializers.ModelSerializer):
         user = User.objects.create(**validated_data)
         user.set_password(password)
         user.save()
+
+        # Create patient profile
+        Patient.objects.create(
+            user=user,
+            name=f"{user.first_name} {user.last_name}"
+        )
+
         return user
 
 class PasswordResetRequestSerializer(serializers.Serializer):
@@ -103,6 +112,48 @@ class PasswordResetRequestSerializer(serializers.Serializer):
         except User.DoesNotExist:
             raise serializers.ValidationError("User with this email address does not exist.")
         return value
+
+    def save(self):
+        email = self.validated_data['email']
+        user = User.objects.get(email=email)
+        
+        # Generate token and uid
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        
+        # Create reset email
+        subject = "Password Reset Requested"
+        message = f"""
+Hello,
+
+You have requested to reset your password. Here are your password reset details:
+
+UID: {uid}
+Token: {token}
+
+To reset your password, use these details in the password reset confirmation endpoint.
+
+If you did not request this reset, please ignore this email.
+
+Best regards,
+SkinWizard Team
+        """
+        
+        # Send email
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+            fail_silently=False,
+        )
+        
+        # Return both success message and the tokens
+        return {
+            "success": "Password reset email has been sent.",
+            "uid": uid,
+            "token": token
+        }
 
 class PasswordResetConfirmSerializer(serializers.Serializer):
     password = serializers.CharField(

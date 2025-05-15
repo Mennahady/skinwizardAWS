@@ -2,7 +2,12 @@ from django.db import models
 from django.conf import settings  # Correct way to get User model
 
 class Patient(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name='patient_profile',
+        null=True  # Allow null temporarily for migration
+    )
     name = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
 

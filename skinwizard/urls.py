@@ -1,5 +1,5 @@
 """
-URL configuration for skinwizard project.
+URL configuration for skin project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.2/topics/http/urls/
@@ -14,52 +14,34 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-#from rest_framework.documentation import include_docs_urls
-#from rest_framework.schemas import get_schema_view
+from django.conf import settings
+from django.conf.urls.static import static
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
-""" API Documentation
+# Swagger/OpenAPI documentation (only for development)
 schema_view = get_schema_view(
-    title="SkinWizard API",
-    description="API endpoints for SkinWizard application",
-    version="1.0.0"
+    openapi.Info(
+        title="Skin Disease API",
+        default_version='v1',
+        description="API for skin disease detection application",
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
 )
-"""
-# API URL patterns
-api_patterns = [
-    # Authentication endpoints
-    path('auth/', include([
-        path('', include('dj_rest_auth.urls')),  # login, logout, password reset only
-        path('social/', include('allauth.socialaccount.urls')),  # social auth
-    ])),
-# Custom registration for doctors and patients 
-    path('accounts/', include('accounts.urls')),  
-    # Application endpoints
-    path('pharmacy/', include('pharmacy.urls')),
-    path('diagnosis/', include('diagnosis.urls')),
-    path('patient/', include('patient_form.urls')),
-    path('consultation/', include('consultation.urls')),
-    path('content/', include('content.urls')),
-# API Documentation
-    #path('docs/', include_docs_urls(title='SkinWizard API Documentation')),
-    #path('schema/', schema_view),
-]
 
 urlpatterns = [
-    # Admin interface
     path('admin/', admin.site.urls),
-
-    # API endpoints (all under /api/)
-    path('api/', include(api_patterns)),
-
-    # OAuth2 Social Authentication Callbacks
-    path('accounts/', include('allauth.urls')),
-]
-
-# Serve media files in development
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
+    path('api/auth/', include('accounts.urls')),
+    path('api/diagnosis/', include('diagnosis.urls')),
+    path('api/patient/', include('patient_form.urls')),
+    path('api/consultation/', include('consultation.urls')),
+    path('api/content/', include('content.urls')),
+    path('api/pharmacy/', include('pharmacy.urls')),
+    
+    # API documentation - can be disabled in production
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

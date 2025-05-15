@@ -1,5 +1,8 @@
 from django.db import models
-from patient_form.models import Patient  # Correct import (now Patient is in patient/models.py)
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from patient_form.models import Patient, PatientForm
+from datetime import date
 
 class SkinImage(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='images')
@@ -21,3 +24,18 @@ class Diagnosis(models.Model):
 
     def __str__(self):
         return f"Diagnosis for {self.image.patient.name}"
+
+@receiver(post_save, sender=Diagnosis)
+def create_patient_form(sender, instance, created, **kwargs):
+    """Create a patient form after diagnosis is made"""
+    if created:
+        # Check if patient doesn't already have a form
+        if not PatientForm.objects.filter(patient=instance.image.patient).exists():
+            PatientForm.objects.create(
+                patient=instance.image.patient,
+                date_of_birth=date.today(),  # This will be updated by the patient
+                gender='Other',  # Default value, to be updated by patient
+                duration='Less than 1 month',  # Default value
+                condition_frequency='Once',  # Default value
+                affected_body_parts='Other'  # Default value
+            )
