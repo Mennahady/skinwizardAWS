@@ -52,3 +52,15 @@ class CustomUser(AbstractUser):
         verbose_name_plural = _('users')
         db_table = 'accounts_customuser'  # Explicitly set the table name
         swappable = 'AUTH_USER_MODEL'
+
+# --------------------
+# Pharmacy Profile
+# --------------------
+class PharmacyProfile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='pharmacy_profile')
+    pharmacy_name = models.CharField(max_length=255)
+    address = models.TextField()
+    license = models.ImageField(upload_to='licenses/')
+
+    def __str__(self):
+        return f"Pharmacy: {self.pharmacy_name}"

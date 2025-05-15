@@ -149,4 +149,47 @@ class CustomUserDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'email', 'first_name', 'last_name', 'user_type')
-        read_only_fields = ('email', 'user_type') 
+        read_only_fields = ('email', 'user_type')
+
+# -----------------------
+# Pharmacy Registration
+# -----------------------
+class PharmacyRegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
+
+    pharmacy_name = serializers.CharField()
+    address = serializers.CharField()
+    license = serializers.ImageField()
+
+    class Meta:
+        model = User
+        fields = ['email', 'password', 'confirm_password', 'pharmacy_name', 'address', 'license']
+
+    def validate(self, data):
+        if data['password'] != data['confirm_password']:
+            raise serializers.ValidationError("Passwords do not match.")
+        return data
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        validated_data.pop('confirm_password')
+
+        pharmacy_name = validated_data.pop('pharmacy_name')
+        address = validated_data.pop('address')
+        license = validated_data.pop('license')
+
+        user = User.objects.create_user(
+            role='pharmacy',
+            password=password,
+            **validated_data
+        )
+
+        PharmacyProfile.objects.create(
+            user=user,
+            pharmacy_name=pharmacy_name,
+            address=address,
+            license=license
+        )
+
+        return user 

@@ -5,7 +5,8 @@ from .serializers import (
     DoctorRegistrationSerializer, 
     PatientRegistrationSerializer,
     PasswordResetRequestSerializer,
-    PasswordResetConfirmSerializer
+    PasswordResetConfirmSerializer,
+    PharmacyRegisterSerializer
 )
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
@@ -13,6 +14,8 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.conf import settings
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework.generics import CreateAPIView
 
 User = get_user_model()
 
@@ -110,3 +113,10 @@ class PasswordResetConfirmView(generics.CreateAPIView):
         return Response({
             "message": "Password has been reset successfully."
         })
+
+# -----------------------------
+# Pharmacy Registration View
+# -----------------------------
+class PharmacyRegisterView(CreateAPIView):
+    serializer_class = PharmacyRegisterSerializer
+    parser_classes = [MultiPartParser, FormParser, JSONParser]

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import CustomUser, PharmacyProfile
 
 class CustomUserAdmin(UserAdmin):
     list_display = ('email', 'first_name', 'last_name', 'user_type', 'is_staff')
@@ -29,5 +29,9 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('email', 'password1', 'password2', 'user_type'),
         }),
     )
+
+@admin.register(PharmacyProfile)
+class PharmacyProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'pharmacy_name', 'address')
 
 admin.site.register(CustomUser, CustomUserAdmin)
