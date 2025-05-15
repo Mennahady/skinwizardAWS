@@ -1,12 +1,17 @@
 from django.urls import path
 from .views import (
-    PatientRegisterView,
-    DoctorRegisterView,
-    PharmacyRegisterView
+    DoctorRegistrationView,
+    PatientRegistrationView,
+    PasswordResetRequestView,
+    PasswordResetConfirmView
 )
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
-    path('register/patient/', PatientRegisterView.as_view(), name='register-patient'),
-    path('register/doctor/', DoctorRegisterView.as_view(), name='register-doctor'),
-    path('register/pharmacy/', PharmacyRegisterView.as_view(), name='register-pharmacy'),
-]
+    path('register/doctor/', DoctorRegistrationView.as_view(), name='doctor_register'),
+    path('register/patient/', PatientRegistrationView.as_view(), name='patient_register'),
+    path('login/', TokenObtainPairView.as_view(), name='login'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('password/reset/', PasswordResetRequestView.as_view(), name='password_reset_request'),
+    path('password/reset/confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+] 

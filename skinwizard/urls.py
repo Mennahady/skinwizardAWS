@@ -18,26 +18,46 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework.documentation import include_docs_urls
+from rest_framework.schemas import get_schema_view
+
+# API Documentation
+schema_view = get_schema_view(
+    title="SkinWizard API",
+    description="API endpoints for SkinWizard application",
+    version="1.0.0"
+)
 
 urlpatterns = [
+    # Admin
     path('admin/', admin.site.urls),
-    path('api/auth/', include('dj_rest_auth.urls')),
-    path('api/auth/registration/', include('dj_rest_auth.registration.urls')),
-    path('api/accounts/', include('accounts.urls')),  # your custom endpoints
-    path('accounts/', include('allauth.urls')),  # for OAuth callbacks
-    path('api/pharmacy/', include('pharmacy.urls')),
-    path('api/diagnosis/', include('diagnosis.urls')),
-    path('api/patient_form/', include('patient_form.urls')),
-    path('api/consultation/', include('consultation.urls')),
-    path('api/content/', include('content.urls')),
 
+    # API Authentication
+    path('api/auth/', include([
+        path('', include('dj_rest_auth.urls')),  # login, logout, password reset
+        path('registration/', include('dj_rest_auth.registration.urls')),  # registration
+        path('social/', include('allauth.socialaccount.urls')),  # social auth
+    ])),
 
-    # Social login
-    path('auth/social/', include('allauth.socialaccount.urls')),
-  
-  
+    # API Endpoints
+    path('api/', include([
+        path('accounts/', include('accounts.urls')),
+        path('pharmacy/', include('pharmacy.urls')),
+        path('diagnosis/', include('diagnosis.urls')),
+        path('patient/', include('patient_form.urls')),
+        path('consultation/', include('consultation.urls')),
+        path('content/', include('content.urls')),
+    ])),
 
+    # OAuth2 Social Authentication Callbacks
+    path('accounts/', include('allauth.urls')),
+
+    # API Documentation
+    path('api/docs/', include_docs_urls(title='SkinWizard API Documentation')),
+    path('api/schema/', schema_view),
 ]
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Serve media files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
