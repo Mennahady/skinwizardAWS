@@ -56,6 +56,15 @@ class PatientForm(models.Model):
     def __str__(self):
         return f"Form for {self.patient.name}"
 
+    def is_complete(self):
+        return all([
+            self.date_of_birth is not None,
+            self.gender,
+            self.duration,
+            self.condition_frequency,
+            self.affected_body_parts,
+        ])
+
 class Doctor(models.Model):
     name = models.CharField(max_length=100)
     specialty = models.CharField(max_length=100)

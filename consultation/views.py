@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from .models import Diagnosis as ConsultationDiagnosis, Message, ChatSession, ChatMessage
 from .serializers import DiagnosisSerializer, MessageSerializer, ChatSessionSerializer, ChatMessageSerializer
 from diagnosis.models import Diagnosis as DiagnosisFromDiagnosis
-from patient_form.models import PatientForm
+from patient_form.models import PatientForm, Patient, Doctor
 
 class ShareDiagnosisView(generics.CreateAPIView):
     queryset = ConsultationDiagnosis.objects.all()
@@ -30,9 +30,14 @@ class ChatSessionViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        if self.request.user.user_type == 'DOCTOR':
-            return ChatSession.objects.filter(doctor=self.request.user)
-        return ChatSession.objects.filter(patient__user=self.request.user)
+        user = self.request.user
+        if user.user_type == 'DOCTOR':
+            try:
+                doctor = Doctor.objects.get(email=user.email)
+                return ChatSession.objects.filter(doctor=doctor)
+            except Doctor.DoesNotExist:
+                return ChatSession.objects.none() # Return empty queryset if no Doctor profile found
+        return ChatSession.objects.filter(patient__user=user)
 
     @action(detail=False, methods=['post'])
     def start_from_diagnosis(self, request):
