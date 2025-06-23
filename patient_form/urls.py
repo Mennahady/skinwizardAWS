@@ -4,8 +4,8 @@ from .views import PatientFormViewSet, DoctorViewSet, ChatMessageViewSet
 
 router = DefaultRouter()
 router.register(r'forms', PatientFormViewSet)
-router.register(r'doctors', DoctorViewSet)
-router.register(r'messages', ChatMessageViewSet, basename='chatmessage')
+#router.register(r'doctors', DoctorViewSet)
+#router.register(r'messages', ChatMessageViewSet, basename='chatmessage')
 
 urlpatterns = [
     path('', include(router.urls)),
