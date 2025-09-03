@@ -21,14 +21,23 @@ It combines medical image diagnosis with patient history forms, consultations, a
 
 skinwizardAWS/
 accounts/ # User authentication & profiles
+
 consultation/ # Patient consultation workflows
+
  content/ # Educational content management
+ 
 diagnosis/ # AI model integration & diagnosis logic
+
  media/ # File & image uploads
+ 
  patient_form/ # Patient medical history forms
+ 
 pharmacy/ # Pharmacy & prescriptions
+
  skinwizard/ # Core project settings
+ 
 manage.py # Django management script
+
 requirements.txt # Python dependencies
 
 
@@ -49,8 +58,7 @@ source venv/bin/activate
 # On Windows
 venv\Scripts\activate
 3️⃣ Install dependencies
-bash
-Copy code
+
 pip install -r requirements.txt
 4️⃣ Apply database migrations
 
@@ -60,7 +68,7 @@ python manage.py migrate
 python manage.py runserver
 Now open http://127.0.0.1:8000/ 🎉
 
-🔑 Environment Variables
+ Environment Variables
 Create a .env file in the project root and configure:
 
 env
@@ -71,11 +79,9 @@ DATABASE_URL=your_database_url
 AWS_ACCESS_KEY_ID=your_aws_key
 AWS_SECRET_ACCESS_KEY=your_aws_secret
 AWS_STORAGE_BUCKET_NAME=your_bucket_name
-🧪 Running Tests
-bash
-Copy code
+ Running Tests
 python manage.py test
-📌 Future Improvements
+ Future Improvements
 Doctor notes & recommendations
 
 Real-time chat between doctors and patients
@@ -91,4 +97,5 @@ Menna Abdelhady
 📜 License
 This project is developed for academic purposes as part of a graduation project.
 You may use or extend it with proper attribution.
+
 
