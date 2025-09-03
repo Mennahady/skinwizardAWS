@@ -13,24 +13,23 @@ It combines medical image diagnosis with patient history forms, consultations, a
 -  **Consultations** – Redirect patients to doctors for further advice.  
 -  **Content Management** – Educational content & resources for patients.  
 -  **Pharmacy Module** – Manage prescriptions and treatments.  
-- ☁ **AWS Integration** – Supports AWS for storage and deployment.  
+- **AWS Integration** – Supports AWS for storage and deployment.  
 
 ---
 
 ## Project Structure
 
 skinwizardAWS/
-│
-├── accounts/ # User authentication & profiles
-├── consultation/ # Patient consultation workflows
-├── content/ # Educational content management
-├── diagnosis/ # AI model integration & diagnosis logic
-├── media/ # File & image uploads
-├── patient_form/ # Patient medical history forms
-├── pharmacy/ # Pharmacy & prescriptions
-├── skinwizard/ # Core project settings
-├── manage.py # Django management script
-└── requirements.txt # Python dependencies
+accounts/ # User authentication & profiles
+consultation/ # Patient consultation workflows
+ content/ # Educational content management
+diagnosis/ # AI model integration & diagnosis logic
+ media/ # File & image uploads
+ patient_form/ # Patient medical history forms
+pharmacy/ # Pharmacy & prescriptions
+ skinwizard/ # Core project settings
+manage.py # Django management script
+requirements.txt # Python dependencies
 
 
 
@@ -92,3 +91,4 @@ Menna Abdelhady
 📜 License
 This project is developed for academic purposes as part of a graduation project.
 You may use or extend it with proper attribution.
+
